@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirecting to Amazon Review...</title>
+    <script>
+        async function redirectReader() {
+            // 1. Get ASIN from the URL (e.g., ?asin=B0GKJF7HKW)
+            const urlParams = new URLSearchParams(window.location.search);
+            const asin = urlParams.get('asin');
+
+            // Fallback if no ASIN is provided
+            if (!asin) {
+                document.body.innerHTML = "Error: No ASIN provided in the link.";
+                return;
+            }
+
+            const defaultSuffix = "com";
+            const marketplaceMap = {
+                "IN": "in", "GB": "co.uk", "CA": "ca", "DE": "de", 
+                "FR": "fr", "ES": "es", "IT": "it", "JP": "co.jp", 
+                "AU": "com.au", "MX": "com.mx", "BR": "com.br"
+            };
+
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                const suffix = marketplaceMap[data.country_code] || defaultSuffix;
+                
+                window.location.href = `https://www.amazon.${suffix}/review/create-review?asin=${asin}`;
+            } catch (error) {
+                window.location.href = `https://www.amazon.com/review/create-review?asin=${asin}`;
+            }
+        }
+        window.onload = redirectReader;
+    </script>
+</head>
+<body style="background-color: #f4f4f4; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: sans-serif;">
+    <p>Connecting you to your local Amazon store...</p>
+</body>
+</html>
