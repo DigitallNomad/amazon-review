@@ -4,30 +4,33 @@
     <title>Redirecting to Amazon Review...</title>
     <script>
         async function redirectReader() {
-            // 1. Get ASIN from the URL (e.g., ?asin=B0GKJF7HKW)
             const urlParams = new URLSearchParams(window.location.search);
             const asin = urlParams.get('asin');
 
-            // Fallback if no ASIN is provided
             if (!asin) {
-                document.body.innerHTML = "Error: No ASIN provided in the link.";
+                document.body.innerHTML = "Error: No ASIN provided.";
                 return;
             }
 
             const defaultSuffix = "com";
             const marketplaceMap = {
-                "IN": "in", "GB": "co.uk", "CA": "ca", "DE": "de", 
-                "FR": "fr", "ES": "es", "IT": "it", "JP": "co.jp", 
-                "AU": "com.au", "MX": "com.mx", "BR": "com.br"
+                "IN": "in", "GB": "co.uk", "IE": "ie", "CA": "ca", 
+                "DE": "de", "FR": "fr", "ES": "es", "IT": "it", 
+                "NL": "nl", "SE": "se", "PL": "pl", "BE": "com.be",
+                "TR": "com.tr", "JP": "co.jp", "AU": "com.au", "SG": "sg",
+                "AE": "ae", "SA": "sa", "EG": "eg", "ZA": "co.za",
+                "MX": "com.mx", "BR": "com.br"
             };
 
             try {
+                // Fetch user's country code
                 const response = await fetch('https://ipapi.co/json/');
                 const data = await response.json();
                 const suffix = marketplaceMap[data.country_code] || defaultSuffix;
                 
                 window.location.href = `https://www.amazon.${suffix}/review/create-review?asin=${asin}`;
             } catch (error) {
+                // Fallback to .com if API fails
                 window.location.href = `https://www.amazon.com/review/create-review?asin=${asin}`;
             }
         }
@@ -35,6 +38,10 @@
     </script>
 </head>
 <body style="background-color: #f4f4f4; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: sans-serif;">
-    <p>Connecting you to your local Amazon store...</p>
+    <div style="text-align: center;">
+        <p>Connecting you to your local Amazon store...</p>
+        <div style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 2s linear infinite; margin: 20px auto;"></div>
+    </div>
+    <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
 </body>
 </html>
